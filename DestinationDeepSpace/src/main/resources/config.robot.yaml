@@ -1,0 +1,135 @@
+---
+motorIds:
+  LEFT_DRIVE_MOTOR_FRONT_ID: 3
+  LEFT_DRIVE_MOTOR_MIDDLE_ID: 2
+  LEFT_DRIVE_MOTOR_REAR_ID: 1
+  RIGHT_DRIVE_MOTOR_FRONT_ID: 6
+  RIGHT_DRIVE_MOTOR_MIDDLE_ID: 5
+  RIGHT_DRIVE_MOTOR_REAR_ID: 4
+  
+  INTAKE_MOTOR_ID: 10
+  ARM_MOTOR1_ID: 9
+  ARM_MOTOR2_ID: 12
+
+  CLIMB_MOTOR_1_ID: 8
+  CLIMB_MOTOR_2_ID: 11
+
+vars:
+  PRIMARY_PID_LOOP: 0
+  CASCADED_PID_LOOP: 1
+
+motors:
+  drive:
+    left: 
+      - &leftFront # This is the base motor, the other right side motors will inherit config from here
+        id: "{{ motorIds.LEFT_DRIVE_MOTOR_FRONT_ID }}"
+        name: "Left Front"
+        inverted: false
+        sensorPhase: true
+        openLoopRampSeconds: .25
+        closedLoopRampSeconds: 0
+        neutralDeadband: 0
+        fullThrottleAverageSpeedNativeTicks: 9926.8
+        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .8 }}"
+
+        # regular old motion magic constants
+        motionPID:
+          kF: 0
+          kP: 0
+          kI: 0
+          kD: 0
+          iZone: 0
+        
+        # velocity PID elements
+        velocityPID:
+          kF: 0.113039
+          kP: "{{ 0.5115/2/1.5 }}"
+          kI: .0001
+          kD: "{{ 10.0*0.5115 }}"
+          iZone: 200
+
+      - <<: *leftFront # take all values from leftFront except what we override
+        id: "{{ motorIds.LEFT_DRIVE_MOTOR_MIDDLE_ID }}"
+        name: "Left Middle"
+
+      - <<: *leftFront # take all values from leftFront except what we override
+        id: "{{ motorIds.LEFT_DRIVE_MOTOR_REAR_ID }}"
+        name: "Left Rear"
+
+    right: 
+      - &rightFront # This is the base motor, the other right side motors will inherit config from here
+        id: "{{ motorIds.RIGHT_DRIVE_MOTOR_FRONT_ID }}"
+        name: "Right Front"
+        inverted: true
+        sensorPhase: true
+
+        # regular old motion magic constants
+        motionPID:
+          kF: 0
+          kP: 0
+          kI: 0
+          kD: 0
+          iZone: 0
+        
+        # velocity PID elements
+        velocityPID:
+          kF: 0.114944
+          kP: "{{ 0.683333/2/2/1.5 }}"
+          kI: .0001
+          kD: "{{ 10*0.683333/2/1.5 }}"
+          iZone: 200      
+
+      - <<: *rightFront # take all values from rightFront except what we override
+        id: "{{ motorIds.RIGHT_DRIVE_MOTOR_MIDDLE_ID }}"
+        name: "Right Middle"
+
+      - <<: *rightFront # take all values from rightFront except what we override
+        id: "{{ motorIds.RIGHT_DRIVE_MOTOR_REAR_ID }}"
+        name: "Right Rear"
+  
+  scoring:
+    arm1:
+      &scoringArm
+      id: "{{ motorIds.ARM_MOTOR1_ID }}"
+      name: "Arm1"
+      inverted: false
+      sensorPhase: false
+      motionPID:
+        kF: 3.41
+        kP: "{{ 0.146143*2*2*2 }}"
+        kI: .0001
+        kD: "{{ 8.0*10.0*0.146143*2*2*2 }}"
+        iZone: 80
+      motionCruise: "{{ (.75 * 300) | int}}"
+      motionAcceleration: "{{ (.75 * 300) | int }}"
+      encoder:
+        enabled: true
+        pidLoop: "{{ vars.PRIMARY_PID_LOOP }}"
+        type: CTRE_MagEncoder_Relative
+        startingPosition: 0
+        statusFramePeriod: 1
+    arm2: 
+      # arm2 is a simple follower motor, no need to inherit config
+      id: "{{ motorIds.ARM_MOTOR2_ID }}"
+      name: "Arm2"
+    intake: 
+      id: "{{ motorIds.INTAKE_MOTOR_ID }}"
+      name: "Intake"
+      inverted: true
+
+  climb:
+    climb1: 
+      id: "{{ motorIds.CLIMB_MOTOR_1_ID }}"
+      name: "Climb1"
+      neutralMode: Brake
+      forwardLimitSwitch: 
+        enabled: true
+        normalOpenOrClose: NormallyOpen
+
+      reverseLimitSwitch: 
+        enabled: true
+        normalOpenOrClose: NormallyOpen
+    climb2: 
+      id: "{{ motorIds.CLIMB_MOTOR_2_ID }}"
+      name: "Climb2"
+  

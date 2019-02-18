@@ -65,9 +65,9 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 
 
 
-		rollerMotor = new WPI_TalonSRX(MotorId.INTAKE_MOTOR_ID);
-		armMotor1   = new WPI_TalonSRX(MotorId.ARM_MOTOR1_ID);	// TODO: Rename to armMotor1 and 2
-		armMotor2   = new WPI_TalonSRX(MotorId.ARM_MOTOR2_ID);
+		rollerMotor = TalonUtils.createMotorFromConfig(config.motors.scoring.intake);
+		armMotor1   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm1);
+		armMotor2   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm2);
 
 		// initialize motors before setting sensor positions and follower modes
 		// otherwise, it may clear those settings
@@ -83,17 +83,17 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 
 		armMotor1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,0);
 		armMotor1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,LimitSwitchNormal.NormallyOpen,0);
-		
+
 		armMotor1.overrideLimitSwitchesEnable(true);
 
 		armMotor1.setNeutralMode(NeutralMode.Brake);
 
 
-		TalonUtils.initializeMotorFPID(armMotor1, 
-							ScoringConstants.ARM_MOTION_MAGIC_KF, 
-							ScoringConstants.ARM_MOTION_MAGIC_KP, 
-							ScoringConstants.ARM_MOTION_MAGIC_KI, 
-							ScoringConstants.ARM_MOTION_MAGIC_KD, 
+		TalonUtils.initializeMotorFPID(armMotor1,
+							ScoringConstants.ARM_MOTION_MAGIC_KF,
+							ScoringConstants.ARM_MOTION_MAGIC_KP,
+							ScoringConstants.ARM_MOTION_MAGIC_KI,
+							ScoringConstants.ARM_MOTION_MAGIC_KD,
 							ScoringConstants.ARM_MOTION_MAGIC_IZONE);
 
 		// TODO: Configure armMotor1 to use initializeMagEncoderRelativeMotor
@@ -238,7 +238,7 @@ public class ScoringSubsystem extends BitBucketSubsystem {
         boolean bLoadingStation = oi.bLoadingStation();
 		boolean bRocket1 = oi.bRocket1();
 		boolean topDeadCenter = oi.topDeadCenter();
-		
+
 		ScoringConstants.ScoringLevel level = ScoringConstants.ScoringLevel.NONE;
 
 
@@ -248,22 +248,22 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 		if (topDeadCenter)
 		{
 			if (level == ScoringConstants.ScoringLevel.NONE)
-			{ 
-				level = ScoringConstants.ScoringLevel.TOP_DEAD_CENTER; 
+			{
+				level = ScoringConstants.ScoringLevel.TOP_DEAD_CENTER;
 			}
-			else 
-			{ 
-				return ScoringConstants.ScoringLevel.INVALID; 
+			else
+			{
+				return ScoringConstants.ScoringLevel.INVALID;
 			}
 		}
 		if (ground) {
 			if (level == ScoringConstants.ScoringLevel.NONE)
-			{ 
-				level = ScoringConstants.ScoringLevel.GROUND; 
+			{
+				level = ScoringConstants.ScoringLevel.GROUND;
 			}
-			else 
-			{ 
-				return ScoringConstants.ScoringLevel.INVALID; 
+			else
+			{
+				return ScoringConstants.ScoringLevel.INVALID;
 			}
 		}
 		if (bCargo) {
@@ -400,7 +400,7 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 
 	@Override
 	public void periodic() {
-		
+
 		if (exceededCurrentLimit())
 		{
 			startIdle();

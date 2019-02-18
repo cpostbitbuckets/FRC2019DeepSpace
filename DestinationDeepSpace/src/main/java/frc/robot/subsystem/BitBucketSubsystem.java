@@ -7,6 +7,7 @@
 
 package frc.robot.subsystem;
 
+import frc.robot.config.Config;
 import frc.robot.subsystem.SubsystemUtilities.DiagnosticsState;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public abstract class BitBucketSubsystem extends Subsystem {
 	
 	protected static DriverStation ds = DriverStation.getInstance(); // Convenience
+	protected static Config config = Config.instance();
 
 	protected boolean initializedBase = false;
 
