@@ -7,32 +7,27 @@
 
 package frc.robot.subsystem.climber;
 
-import frc.robot.subsystem.BitBucketSubsystem;
-
-import edu.wpi.first.wpilibj.Timer;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import frc.robot.MotorId;
 import frc.robot.ServoId;
 import frc.robot.operatorinterface.OI;
+import frc.robot.subsystem.BitBucketSubsystem;
+import frc.robot.utils.talonutils.TalonUtils;
 /**
  * Add your docs here.
  */
 public class ClimberSubsystem extends BitBucketSubsystem {
   	// Put methods for controlling this subsystem
-  	// here. Call these from Commands.
-
+	// here. Call these from Commands.
+	
 	// Singleton method; use ClimberSubsystem.instance() to get the ClimberSubsystem instance.
 	Servo climbServo;
 	WPI_TalonSRX  climbMotor1;
 	WPI_TalonSRX climbMotor2;
+	
 	// TODO: Set proper values for angles and motors
 	double highClimbAngle = 40;
 	double highClimbSpeed = 0.25;
@@ -55,15 +50,10 @@ public class ClimberSubsystem extends BitBucketSubsystem {
 	private ClimberSubsystem() {
 		setName("ClimberSubsystem");
 		climbServo  = new Servo(ServoId.CLIMB_SERVO_ID);
-		climbMotor1 = new WPI_TalonSRX(MotorId.CLIMB_MOTOR_1_ID);
-		climbMotor2 = new WPI_TalonSRX(MotorId.CLIMB_MOTOR_2_ID);
-
-		climbMotor1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,0);
-		climbMotor1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,LimitSwitchNormal.NormallyOpen,0);
-		
+		climbMotor1 = TalonUtils.createMotorFromConfig(config.motors.climb.climb1);
+		climbMotor2 = TalonUtils.createMotorFromConfig(config.motors.climb.climb2);
+	
 		climbMotor1.overrideLimitSwitchesEnable(true);
-
-		climbMotor1.setNeutralMode(NeutralMode.Brake);
 	}
 
 	public static ClimberSubsystem instance() {
