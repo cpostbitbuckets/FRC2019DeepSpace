@@ -21,6 +21,8 @@ import frc.robot.operatorinterface.OI;
 import frc.robot.subsystem.BitBucketSubsystem;
 import frc.robot.utils.talonutils.TalonUtils;
 import frc.robot.utils.talonutils.TalonUtils;
+import frc.robot.subsystem.BitBucketSubsystem;
+import frc.robot.utils.talonutils.TalonUtils;
 /**
  * Add your docs here.
  */
@@ -28,10 +30,13 @@ public class ClimberSubsystem extends BitBucketSubsystem {
   	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
+	// here. Call these from Commands.
+
 	// Singleton method; use ClimberSubsystem.instance() to get the ClimberSubsystem instance.
 	Servo climbServo;
 	WPI_TalonSRX  climbMotor1;
 	WPI_TalonSRX climbMotor2;
+
 
 	// TODO: Set proper values for angles and motors
 	double highClimbAngle = 40;
@@ -58,20 +63,7 @@ public class ClimberSubsystem extends BitBucketSubsystem {
 		climbMotor1 = TalonUtils.createMotorFromConfig(config.motors.climb.climb1);
 		climbMotor2 = TalonUtils.createMotorFromConfig(config.motors.climb.climb2);
 
-		TalonUtils.initializeMotorDefaults(climbMotor1);
-		TalonUtils.initializeMotorDefaults(climbMotor2);
-
-		climbMotor1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,0);
-		climbMotor1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,LimitSwitchNormal.NormallyOpen,0);
-
 		climbMotor1.overrideLimitSwitchesEnable(true);
-
-		climbMotor1.setInverted(false);
-		climbMotor2.setInverted(false);
-
-		climbMotor1.setNeutralMode(NeutralMode.Brake);
-		climbMotor2.setNeutralMode(NeutralMode.Brake);
-
 		climbMotor2.follow(climbMotor1);
 	}
 

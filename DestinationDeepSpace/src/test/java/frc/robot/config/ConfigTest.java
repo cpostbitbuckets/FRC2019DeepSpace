@@ -18,7 +18,7 @@ public class ConfigTest {
 
         // check the eval, note, this test will break if the constants change
         assertEquals(9, config.motors.scoring.arm1.id);
-        assertEquals(0.146143*2*2*2, config.motors.scoring.arm1.motionPID.kP, 0);
+        assertEquals(0.146143*2*2*2  *2*1.5, config.motors.scoring.arm1.motionPID.kP, 0);
 
         // check the templated config        
         assertEquals(3, config.motors.drive.left[0].id);

@@ -7,20 +7,15 @@
 
 package frc.robot.subsystem.scoring;
 
-import frc.robot.MotorId;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.operatorinterface.OI;
 import frc.robot.subsystem.BitBucketSubsystem;
 import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.utils.talonutils.TalonUtils;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 
 
@@ -63,41 +58,12 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 	private ScoringSubsystem() {
 		setName("ScoringSubsystem");
 
-
-
 		rollerMotor = TalonUtils.createMotorFromConfig(config.motors.scoring.intake);
 		armMotor1   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm1);
 		armMotor2   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm2);
 
-		// initialize motors before setting sensor positions and follower modes
-		// otherwise, it may clear those settings
-		TalonUtils.initializeMotorDefaults(rollerMotor);
-		TalonUtils.initializeMotorDefaults(armMotor1);
-		TalonUtils.initializeMotorDefaults(armMotor2);
-
-		rollerMotor.setInverted(ScoringConstants.ROLLER_MOTOR_INVERSION);
-		armMotor1.setInverted(ScoringConstants.ARM_MOTOR_INVERSION);
-		armMotor2.setInverted(ScoringConstants.ARM_MOTOR_INVERSION);
-
-		armMotor1.setSensorPhase(ScoringConstants.ARM_MOTOR_SENSOR_PHASE);
-
-		armMotor1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,0);
-		armMotor1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,LimitSwitchNormal.NormallyOpen,0);
-
+		// TODO: Do we need this in config or can set set it to true when limit switches are set?
 		armMotor1.overrideLimitSwitchesEnable(true);
-
-		armMotor1.setNeutralMode(NeutralMode.Brake);
-
-
-		TalonUtils.initializeMotorFPID(armMotor1,
-							ScoringConstants.ARM_MOTION_MAGIC_KF,
-							ScoringConstants.ARM_MOTION_MAGIC_KP,
-							ScoringConstants.ARM_MOTION_MAGIC_KI,
-							ScoringConstants.ARM_MOTION_MAGIC_KD,
-							ScoringConstants.ARM_MOTION_MAGIC_IZONE);
-
-		// TODO: Configure armMotor1 to use initializeMagEncoderRelativeMotor
-		TalonUtils.initializeMagEncoderRelativeMotor(armMotor1, 1);
 
 		armMotor2.follow(armMotor1);
 
@@ -113,13 +79,6 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 		{
 			back = true;
 		}
-
-		// Acceleration is the slope of the velocity profile used for motion magic
-		// Example: 250 tick/100ms/s is 2500 ticks/s/s
-		armMotor1.configMotionAcceleration(ScoringConstants.ARM_ACCELERATION_TICKS_PER_100MS_PER_SEC, 20);
-		armMotor1.configMotionCruiseVelocity(ScoringConstants.ARM_CRUISE_SPEED_TICKS_PER_100MS, 20);
-
-
 
 		setAllMotorsZero();
 	}
