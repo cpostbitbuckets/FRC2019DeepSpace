@@ -49,10 +49,22 @@ public class Config {
     @Setter
     @NoArgsConstructor
     public static class MotorsConfig {
+        public MotorSlotConfig slots = new MotorSlotConfig();
         public DriveMotorSubsystemConfig drive = new DriveMotorSubsystemConfig();
         public ScoringMotorSubsystemConfig scoring = new ScoringMotorSubsystemConfig();
         public ClimbMotorSubsystemConfig climb = new ClimbMotorSubsystemConfig();
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class MotorSlotConfig {
+        public int motionMagicSlot;
+        public int velocitySlot;
+        public int primaryPIDLoop;
+        public int cascadedPIDLoop;
+    }
+
 
     @Getter
     @Setter

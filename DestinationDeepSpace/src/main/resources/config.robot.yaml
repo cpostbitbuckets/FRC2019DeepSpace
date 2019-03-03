@@ -15,11 +15,14 @@ motorIds:
   CLIMB_MOTOR_2_ID: 11
 
 vars:
-  PRIMARY_PID_LOOP: 0
-  CASCADED_PID_LOOP: 1
   ARM_MAX_SPEED_TICKS_PER_100MS: 300
 
 motors:
+  slots: 
+    motionMagicSlot: 0
+    velocitySlot: 1
+    primaryPIDLoop: 0
+    cascadedPIDLoop: 1
   drive:
     left: 
       - &leftFront # This is the base motor, the other right side motors will inherit config from here
@@ -27,13 +30,22 @@ motors:
         name: "Left Front"
         inverted: false
         sensorPhase: true
-        openLoopRampSeconds: .25
+        openLoopRampSeconds: 0.250 # Second from neutral to full (easy on the gears)
         closedLoopRampSeconds: 0
-        neutralDeadband: 0
-        fullThrottleAverageSpeedNativeTicks: 9926.8
-        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .8 }}"
+        neutralDeadband: 0.04
+        neutralMode: Brake
+        fullThrottleAverageSpeedNativeTicks: 8976.8 # per 100 ms, average of 10 samples
+        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 }}"
+        motionCruise: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 | int }}"
+        motionAcceleration: "{{ 4346 * .75 }}"
 
         # regular old motion magic constants
+        # // public static double MOTION_MAGIC_KF 	 = 0;//0.05115; 
+        # // public static double MOTION_MAGIC_KP 	 = 0;//0.005683*2*2*2*2*2*2*1.5; // = 0.545568
+        # // public static double MOTION_MAGIC_KI 	 = 0;//0.001;
+        # // public static double MOTION_MAGIC_KD 	 = 0;//10 * MOTION_MAGIC_KP;	// Start with 10 x Kp for increased damping of overshoot
+        # // public static int    MOTION_MAGIC_IZONE  = 0;//200; 
+
         motionPID:
           kF: 0
           kP: 0
@@ -49,6 +61,13 @@ motors:
           kD: "{{ 10.0*0.5115 }}"
           iZone: 200
 
+        encoder:
+          enabled: true
+          pidLoop: "{{ motors.primaryPIDLoop }}"
+          type: QuadEncoder
+          startingPosition: 0
+          statusFramePeriod: 160
+
       - <<: *leftFront # take all values from leftFront except what we override
         id: "{{ motorIds.LEFT_DRIVE_MOTOR_MIDDLE_ID }}"
         name: "Left Middle"
@@ -63,6 +82,14 @@ motors:
         name: "Right Front"
         inverted: true
         sensorPhase: true
+        openLoopRampSeconds: 0.250
+        closedLoopRampSeconds: 0
+        neutralDeadband: 0.04
+        neutralMode: Brake
+        fullThrottleAverageSpeedNativeTicks: 8976.8
+        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 }}"
+        motionCruise: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 | int }}"
+        motionAcceleration: "{{ 4346 * .75 }}"
 
         # regular old motion magic constants
         motionPID:
@@ -75,10 +102,17 @@ motors:
         # velocity PID elements
         velocityPID:
           kF: 0.114944
-          kP: "{{ 0.683333/2/2/1.5 }}"
+          kP: "{{ 0.683333/2/2 }}"
           kI: .0001
           kD: "{{ 10*0.683333/2/1.5 }}"
           iZone: 200      
+        
+        encoder:
+          enabled: true
+          pidLoop: "{{ motors.primaryPIDLoop }}"
+          type: QuadEncoder
+          startingPosition: 0
+          statusFramePeriod: 160
 
       - <<: *rightFront # take all values from rightFront except what we override
         id: "{{ motorIds.RIGHT_DRIVE_MOTOR_MIDDLE_ID }}"
@@ -108,7 +142,7 @@ motors:
       motionAcceleration: "{{ (.50 * vars.ARM_MAX_SPEED_TICKS_PER_100MS) | int }}"
       encoder:
         enabled: true
-        pidLoop: "{{ vars.PRIMARY_PID_LOOP }}"
+        pidLoop: "{{ motors.primaryPIDLoop }}"
         type: CTRE_MagEncoder_Relative
         startingPosition: 0
         statusFramePeriod: 1

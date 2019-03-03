@@ -58,9 +58,9 @@ public class ScoringSubsystem extends BitBucketSubsystem {
 	private ScoringSubsystem() {
 		setName("ScoringSubsystem");
 
-		rollerMotor = TalonUtils.createMotorFromConfig(config.motors.scoring.intake);
-		armMotor1   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm1);
-		armMotor2   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm2);
+		rollerMotor = TalonUtils.createMotorFromConfig(config.motors.scoring.intake, config.motors.slots);
+		armMotor1   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm1, config.motors.slots);
+		armMotor2   = TalonUtils.createMotorFromConfig(config.motors.scoring.arm2, config.motors.slots);
 
 		// TODO: Do we need this in config or can set set it to true when limit switches are set?
 		armMotor1.overrideLimitSwitchesEnable(true);

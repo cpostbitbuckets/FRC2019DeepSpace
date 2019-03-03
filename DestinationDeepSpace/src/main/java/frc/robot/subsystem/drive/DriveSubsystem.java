@@ -116,7 +116,7 @@ public class DriveSubsystem extends BitBucketSubsystem {
 
 	// ASSUME left and right are symmetrical
 	// This is package local so unit tests can use it
-	static final int NUM_MOTORS_PER_SIDE = DriveConstants.LEFT_DRIVE_MOTOR_IDS.length;
+	static final int NUM_MOTORS_PER_SIDE = config.motors.drive.left.length;
 
   	private DriveSubsystem()
   	{
@@ -173,20 +173,12 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		rightMotors = new WPI_TalonSRX[NUM_MOTORS_PER_SIDE];
 		for (int i = 0; i < NUM_MOTORS_PER_SIDE; i++)
 		{
-			leftMotors[i] = new WPI_TalonSRX(DriveConstants.LEFT_DRIVE_MOTOR_IDS[i]);
-            leftMotors[i].setName(getName(),"Left_" + Integer.toString(i));
+			leftMotors[i] = TalonUtils.createMotorFromConfig(config.motors.drive.left[i], config.motors.slots);
 
-			TalonUtils.initializeMotorDefaults(leftMotors[i]);
 			if (i > 0)
 			{   // Slave motor for now
 				leftMotors[i].follow(leftMotors[0]);
 			}
-
-			leftMotors[i].setInverted(DriveConstants.LEFT_DRIVE_MOTOR_INVERSION_FLAG[i]);
-
-			// Assume all motor controllers have a sensor or access to one and the phase
-			// is always the same (for now)
-			leftMotors[i].setSensorPhase(DriveConstants.LEFT_DRIVE_MOTOR_SENSOR_PHASE);
 	
 			// Set relevant frame periods to be at least as fast as periodic rate
 			// NOTE: This increases load on CAN bus, so pay attention as more motor
@@ -199,58 +191,14 @@ public class DriveSubsystem extends BitBucketSubsystem {
 											DriveConstants.HIGH_STATUS_FRAME_PERIOD_MS, 
 											DriveConstants.CONTROLLER_TIMEOUT_MS);
 			
-			leftMotors[i].configNeutralDeadband(DriveConstants.LEFT_DRIVE_MOTOR_NEUTRAL_DEADBAND,
-											DriveConstants.CONTROLLER_TIMEOUT_MS);
-			
-			leftMotors[i].configOpenloopRamp(DriveConstants.DRIVE_MOTOR_OPEN_LOOP_RAMP_SEC, 
-										DriveConstants.CONTROLLER_TIMEOUT_MS);
-
-			leftMotors[i].configClosedloopRamp(DriveConstants.DRIVE_MOTOR_CLOSED_LOOP_RAMP_SEC, 
-													DriveConstants.CONTROLLER_TIMEOUT_MS);	
-													
-			// For ALL motors in case we disable slaving
-			TalonUtils.initializeQuadEncoderMotor(leftMotors[i]);
-
-			// Set closed loop gains in different slots for different uses
-			TalonUtils.initializeMotorFPID(leftMotors[i], 
-										DriveConstants.MOTION_MAGIC_KF, 
-										DriveConstants.MOTION_MAGIC_KP, 
-										DriveConstants.MOTION_MAGIC_KI, 
-										DriveConstants.MOTION_MAGIC_KD, 
-										DriveConstants.MOTION_MAGIC_IZONE,
-										DriveConstants.PID_MOTION_MAGIC_SLOT);
-
-			// Motion Magic likes to specify a trapezoidal speed profile
-			// These two settings provide the top speed and acceleration (slope) of profile
-			leftMotors[i].configMotionCruiseVelocity(DriveConstants.DRIVE_MOTOR_MOTION_CRUISE_SPEED_NATIVE_TICKS, 
-												DriveConstants.CONTROLLER_TIMEOUT_MS);
-			leftMotors[i].configMotionAcceleration(DriveConstants.DRIVE_MOTOR_MOTION_ACCELERATION_NATIVE_TICKS, 
-												DriveConstants.CONTROLLER_TIMEOUT_MS);
-
-			TalonUtils.initializeMotorFPID(leftMotors[i], 
-										DriveConstants.LEFT_VELOCITY_KF, 
-										DriveConstants.LEFT_VELOCITY_KP, 
-										DriveConstants.LEFT_VELOCITY_KI, 
-										DriveConstants.LEFT_VELOCITY_KD, 
-										DriveConstants.LEFT_VELOCITY_IZONE,
-										DriveConstants.PID_VELOCITY_SLOT);
-
 			// !!!!!!!!!!!!!!! RIGHT !!!!!!!!!!!!!!!!!
 			// TODO: May make this into a function with a few arguments							
-			rightMotors[i] = new WPI_TalonSRX(DriveConstants.RIGHT_DRIVE_MOTOR_IDS[i]);
-            rightMotors[i].setName(getName(),"Right_" + Integer.toString(i));			
-			TalonUtils.initializeMotorDefaults(rightMotors[i]);
+			rightMotors[i] = TalonUtils.createMotorFromConfig(config.motors.drive.right[i], config.motors.slots);
 			if (i > 0)
 			{   // Slave motor for now
 				rightMotors[i].follow(rightMotors[0]);
 			}
 
-			rightMotors[i].setInverted(DriveConstants.RIGHT_DRIVE_MOTOR_INVERSION_FLAG[i]);
-
-			// Assume all motor controllers have a sensor or access to one and the phase
-			// is always the same (for now)
-			rightMotors[i].setSensorPhase(DriveConstants.RIGHT_DRIVE_MOTOR_SENSOR_PHASE);
-	
 			// Set relevant frame periods to be at least as fast as periodic rate
 			// NOTE: This increases load on CAN bus, so pay attention as more motor
 			// controllers are added to the system as we may want slave motors running
@@ -261,50 +209,9 @@ public class DriveSubsystem extends BitBucketSubsystem {
 			rightMotors[i].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 
 											DriveConstants.HIGH_STATUS_FRAME_PERIOD_MS, 
 											DriveConstants.CONTROLLER_TIMEOUT_MS);
-			
-			rightMotors[i].configNeutralDeadband(DriveConstants.RIGHT_DRIVE_MOTOR_NEUTRAL_DEADBAND,
-											DriveConstants.CONTROLLER_TIMEOUT_MS);
-			
-			rightMotors[i].configOpenloopRamp(DriveConstants.DRIVE_MOTOR_OPEN_LOOP_RAMP_SEC, 
-										DriveConstants.CONTROLLER_TIMEOUT_MS);
-
-			rightMotors[i].configClosedloopRamp(DriveConstants.DRIVE_MOTOR_CLOSED_LOOP_RAMP_SEC, 
-													DriveConstants.CONTROLLER_TIMEOUT_MS);	
-													
-			// For ALL motors in case we disable slaving
-			TalonUtils.initializeQuadEncoderMotor(rightMotors[i]);
-
-			// Set closed loop gains in different slots for different uses
-			TalonUtils.initializeMotorFPID(rightMotors[i], 
-										DriveConstants.MOTION_MAGIC_KF, 
-										DriveConstants.MOTION_MAGIC_KP, 
-										DriveConstants.MOTION_MAGIC_KI, 
-										DriveConstants.MOTION_MAGIC_KD, 
-										DriveConstants.MOTION_MAGIC_IZONE,
-										DriveConstants.PID_MOTION_MAGIC_SLOT);
-
-			// Motion Magic likes to specify a trapezoidal speed profile
-			// These two settings provide the top speed and acceleration (slope) of profile
-			rightMotors[i].configMotionCruiseVelocity(DriveConstants.DRIVE_MOTOR_MOTION_CRUISE_SPEED_NATIVE_TICKS, 
-												DriveConstants.CONTROLLER_TIMEOUT_MS);
-			rightMotors[i].configMotionAcceleration(DriveConstants.DRIVE_MOTOR_MOTION_ACCELERATION_NATIVE_TICKS, 
-												DriveConstants.CONTROLLER_TIMEOUT_MS);
-
-			TalonUtils.initializeMotorFPID(rightMotors[i], 
-										DriveConstants.RIGHT_VELOCITY_KF, 
-										DriveConstants.RIGHT_VELOCITY_KP, 
-										DriveConstants.RIGHT_VELOCITY_KI, 
-										DriveConstants.RIGHT_VELOCITY_KD, 
-										DriveConstants.RIGHT_VELOCITY_IZONE,
-										DriveConstants.PID_VELOCITY_SLOT);
-
-									
 		}	
 
 
-		// Now get the other modes set up
-		setNeutral(NeutralMode.Brake);
-		
 		// Now that we have the motor instances set up the differential drive
 		// as a 2-motor solution regardless of how manu actual motors we have
 		// We are taking advantage of the follower mode to minimize CAN traffic
@@ -380,10 +287,10 @@ public class DriveSubsystem extends BitBucketSubsystem {
 
 			for (int i = 0; i < NUM_MOTORS_PER_SIDE; ++i)
 			{
-				leftMotors[i].selectProfileSlot(DriveConstants.PID_VELOCITY_SLOT, 
-				                                DriveConstants.PRIMARY_PID_LOOP);
-				rightMotors[i].selectProfileSlot(DriveConstants.PID_VELOCITY_SLOT, 
-				                                 DriveConstants.PRIMARY_PID_LOOP);
+				leftMotors[i].selectProfileSlot(config.motors.slots.velocitySlot, 
+				                                config.motors.slots.primaryPIDLoop);
+				rightMotors[i].selectProfileSlot(config.motors.slots.velocitySlot, 
+				                                 config.motors.slots.primaryPIDLoop);
 			}			
 			velocityMode = true;
 		}
@@ -402,10 +309,10 @@ public class DriveSubsystem extends BitBucketSubsystem {
 
 			for (int i = 0; i < NUM_MOTORS_PER_SIDE; ++i)
 			{
-				leftMotors[i].selectProfileSlot(DriveConstants.PID_MOTION_MAGIC_SLOT, 
-												DriveConstants.PRIMARY_PID_LOOP);
-				rightMotors[i].selectProfileSlot(DriveConstants.PID_MOTION_MAGIC_SLOT, 
-												DriveConstants.PRIMARY_PID_LOOP);
+				leftMotors[i].selectProfileSlot(config.motors.slots.motionMagicSlot, 
+												config.motors.slots.primaryPIDLoop);
+				rightMotors[i].selectProfileSlot(config.motors.slots.motionMagicSlot, 
+												config.motors.slots.primaryPIDLoop);
 			}
 			motionMode = true;
 		}
@@ -716,21 +623,6 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		rightMotors[0].set(ControlMode.MotionMagic, value);			
 	}
 
-
-	/** 
-	 * setNeutral is a pass through interface to each motor in the subsystem
-	 * 
-	 * @param neutralMode is either Coast or Brake. Braking will apply force to come to a stop at zero input
-	 */
-	private void setNeutral(NeutralMode neutralMode) 
-	{
-		for (int i = 0; i < NUM_MOTORS_PER_SIDE; ++i)
-		{
-			leftMotors[i].setNeutralMode(neutralMode);
-			rightMotors[i].setNeutralMode(neutralMode);
-		}		
-	}
-
 	/// TODO: This function makes no sense, need to decide if we should
 	/// just scrap it
 	private double yawCorrect() {
@@ -741,11 +633,11 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		// Right motor encoder reads -position when going forward!
 		// TODO: This is wrong! Need new constants
 		return -DriveConstants.WHEEL_CIRCUMFERENCE_INCHES * 
-		        rightMotors[0].getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP);						
+		        rightMotors[0].getSelectedSensorPosition(config.motors.slots.primaryPIDLoop);						
 	}
 	
 	private int getMotorNativeUnits(WPI_TalonSRX m) {
-		return m.getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP);
+		return m.getSelectedSensorPosition(config.motors.slots.primaryPIDLoop);
 	}
 	
 	public int getRightNativeUnits() {
@@ -801,14 +693,14 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		// proper sensor phase and output polarity so their data can simply be
 		// added together
 
-		int velocity_tp100 = (leftMotors[0].getSelectedSensorVelocity(DriveConstants.PRIMARY_PID_LOOP) + 
-		                      rightMotors[0].getSelectedSensorVelocity(DriveConstants.PRIMARY_PID_LOOP))/2;
+		int velocity_tp100 = (leftMotors[0].getSelectedSensorVelocity(config.motors.slots.primaryPIDLoop) + 
+		                      rightMotors[0].getSelectedSensorVelocity(config.motors.slots.primaryPIDLoop))/2;
 		return DriveConstants.ticksP100ToIps(velocity_tp100);
 	}
 	public double getTurnRate_dps()
 	{
-		int differentialVelocity_tp100 = leftMotors[0].getSelectedSensorVelocity(DriveConstants.PRIMARY_PID_LOOP) -
-										 rightMotors[0].getSelectedSensorVelocity(DriveConstants.PRIMARY_PID_LOOP);
+		int differentialVelocity_tp100 = leftMotors[0].getSelectedSensorVelocity(config.motors.slots.primaryPIDLoop) -
+										 rightMotors[0].getSelectedSensorVelocity(config.motors.slots.primaryPIDLoop);
 		return Math.toDegrees(DriveConstants.ticksP100ToIps(differentialVelocity_tp100) / DriveConstants.WHEEL_TRACK_INCHES);
 	}
 
@@ -832,7 +724,7 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		m.set(ControlMode.PercentOutput, 0.0);
 		
 		// Clear the encoder to start a motion relative to "here"
-		m.setSelectedSensorPosition(0, DriveConstants.PRIMARY_PID_LOOP, DriveConstants.CONTROLLER_TIMEOUT_MS);
+		m.setSelectedSensorPosition(0, config.motors.slots.primaryPIDLoop, DriveConstants.CONTROLLER_TIMEOUT_MS);
 	}
 	
 	// Set up the entire drive system for position control
@@ -864,8 +756,8 @@ public class DriveSubsystem extends BitBucketSubsystem {
 	public boolean isMoveComplete(double distance_inches)	// At timeout should be used with this
 	{
 		int ticks = (int)inchesToNativeTicks(distance_inches);
-		int errorL = (int) Math.abs(ticks - leftMotors[0].getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP));
-		int errorR = (int) Math.abs(ticks - rightMotors[0].getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP));
+		int errorL = (int) Math.abs(ticks - leftMotors[0].getSelectedSensorPosition(config.motors.slots.primaryPIDLoop));
+		int errorR = (int) Math.abs(ticks - rightMotors[0].getSelectedSensorPosition(config.motors.slots.primaryPIDLoop));
 		return (errorL  < DriveConstants.DRIVE_MOTOR_MAX_CLOSED_LOOP_ERROR_TICKS) &&
 			   (errorR < DriveConstants.DRIVE_MOTOR_MAX_CLOSED_LOOP_ERROR_TICKS);
 	}
@@ -890,8 +782,8 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		// then the equivalent angle is about 0.6 degrees of frame rotation.
 		
 		double targetPos_ticks = (angle_degrees * DriveConstants.WHEEL_ROTATION_PER_FRAME_DEGREES) * DriveConstants.DRIVE_MOTOR_NATIVE_TICKS_PER_REV;
-		int errorL = (int) Math.abs(targetPos_ticks - (leftMotors[0].getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP)));
-		int errorR = (int) Math.abs(-targetPos_ticks - (rightMotors[0].getSelectedSensorPosition(DriveConstants.PRIMARY_PID_LOOP)));
+		int errorL = (int) Math.abs(targetPos_ticks - (leftMotors[0].getSelectedSensorPosition(config.motors.slots.primaryPIDLoop)));
+		int errorR = (int) Math.abs(-targetPos_ticks - (rightMotors[0].getSelectedSensorPosition(config.motors.slots.primaryPIDLoop)));
 		return (errorL  < DriveConstants.DRIVE_MOTOR_MAX_CLOSED_LOOP_ERROR_TICKS_ROTATION) &&
 			   (errorR < DriveConstants.DRIVE_MOTOR_MAX_CLOSED_LOOP_ERROR_TICKS_ROTATION);
 		

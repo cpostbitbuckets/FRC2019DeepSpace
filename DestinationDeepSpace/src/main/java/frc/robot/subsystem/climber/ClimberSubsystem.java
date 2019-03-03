@@ -8,19 +8,12 @@
 package frc.robot.subsystem.climber;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.ServoId;
 import frc.robot.operatorinterface.OI;
-import frc.robot.subsystem.BitBucketSubsystem;
-import frc.robot.utils.talonutils.TalonUtils;
-import frc.robot.utils.talonutils.TalonUtils;
 import frc.robot.subsystem.BitBucketSubsystem;
 import frc.robot.utils.talonutils.TalonUtils;
 /**
@@ -60,8 +53,8 @@ public class ClimberSubsystem extends BitBucketSubsystem {
 	private ClimberSubsystem() {
 		setName("ClimberSubsystem");
 		climbServo  = new Servo(ServoId.CLIMB_SERVO_ID);
-		climbMotor1 = TalonUtils.createMotorFromConfig(config.motors.climb.climb1);
-		climbMotor2 = TalonUtils.createMotorFromConfig(config.motors.climb.climb2);
+		climbMotor1 = TalonUtils.createMotorFromConfig(config.motors.climb.climb1, config.motors.slots);
+		climbMotor2 = TalonUtils.createMotorFromConfig(config.motors.climb.climb2, config.motors.slots);
 
 		climbMotor1.overrideLimitSwitchesEnable(true);
 		climbMotor2.follow(climbMotor1);

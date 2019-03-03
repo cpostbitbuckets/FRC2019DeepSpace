@@ -2,6 +2,8 @@ package frc.robot.utils.talonutils;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import frc.robot.RobotMap;
+
 
 
 public class BB_Motor extends WPI_TalonSRX {
@@ -130,7 +132,7 @@ public class BB_Motor extends WPI_TalonSRX {
 
     /** Initialize a PID loop */
     public void initializePID(int idx) {
-        TalonUtils.initializeMotorFPID(this, kf[idx], kp[idx], ki[idx], kd[idx], iZone[idx], idx);
+        TalonUtils.initializeMotorFPID(this, kf[idx], kp[idx], ki[idx], kd[idx], iZone[idx], idx, 0);
 
         doesPID = true;
     }
@@ -161,7 +163,7 @@ public class BB_Motor extends WPI_TalonSRX {
         
         // initialize quad encoders
         if (statusFramePeriod != 0) {
-            TalonUtils.initializeQuadEncoderMotor(this, statusFramePeriod);
+            TalonUtils.initializeQuadEncoderMotor(this, statusFramePeriod, RobotMap.PRIMARY_PID_LOOP);
         } else {
             TalonUtils.initializeQuadEncoderMotor(this);
         }
