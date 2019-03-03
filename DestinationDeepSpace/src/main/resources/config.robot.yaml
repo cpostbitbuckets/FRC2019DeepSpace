@@ -35,9 +35,9 @@ motors:
         neutralDeadband: 0.04
         neutralMode: Brake
         fullThrottleAverageSpeedNativeTicks: 8976.8 # per 100 ms, average of 10 samples
-        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 }}"
-        motionCruise: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 | int }}"
-        motionAcceleration: "{{ 4346 * .75 }}"
+        cruiseSpeedNativeTicks: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
+        motionCruise: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
+        motionAcceleration: "{{ (4346 * .75) | int }}"
 
         # regular old motion magic constants
         # // public static double MOTION_MAGIC_KF 	 = 0;//0.05115; 
@@ -63,7 +63,7 @@ motors:
 
         encoder:
           enabled: true
-          pidLoop: "{{ motors.primaryPIDLoop }}"
+          pidLoop: "{{ motors.slots.primaryPIDLoop }}"
           type: QuadEncoder
           startingPosition: 0
           statusFramePeriod: 160
@@ -87,9 +87,9 @@ motors:
         neutralDeadband: 0.04
         neutralMode: Brake
         fullThrottleAverageSpeedNativeTicks: 8976.8
-        cruiseSpeedNativeTicks: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 }}"
-        motionCruise: "{{ motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75 | int }}"
-        motionAcceleration: "{{ 4346 * .75 }}"
+        cruiseSpeedNativeTicks: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
+        motionCruise: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
+        motionAcceleration: "{{ (4346 * .75) | int }}"
 
         # regular old motion magic constants
         motionPID:
@@ -109,7 +109,7 @@ motors:
         
         encoder:
           enabled: true
-          pidLoop: "{{ motors.primaryPIDLoop }}"
+          pidLoop: "{{ motors.slots.primaryPIDLoop }}"
           type: QuadEncoder
           startingPosition: 0
           statusFramePeriod: 160
@@ -142,7 +142,7 @@ motors:
       motionAcceleration: "{{ (.50 * vars.ARM_MAX_SPEED_TICKS_PER_100MS) | int }}"
       encoder:
         enabled: true
-        pidLoop: "{{ motors.primaryPIDLoop }}"
+        pidLoop: "{{ motors.slots.primaryPIDLoop }}"
         type: CTRE_MagEncoder_Relative
         startingPosition: 0
         statusFramePeriod: 1

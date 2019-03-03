@@ -64,7 +64,6 @@ public class DriveConstants {
         double rps = ticksP100 * 10.0 / DRIVE_MOTOR_NATIVE_TICKS_PER_REV;
         return rps * WHEEL_CIRCUMFERENCE_INCHES;
     }
-
     
 	public static final int CONTROLLER_TIMEOUT_MS = 100; // Default timeout to wait for configuration response
     

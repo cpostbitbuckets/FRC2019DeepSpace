@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystem.BitBucketSubsystem;
 import frc.robot.subsystem.navigation.BitBucketsAHRS;
 import frc.robot.utils.JoystickScale;
+import frc.robot.config.Config;
 
 /**
  * The DriveSubsystemTest class will unit test the DriveSubsystem. This requires mocking out a bunch
@@ -44,6 +46,7 @@ import frc.robot.utils.JoystickScale;
         BitBucketsAHRS.class,
         DriveSubsystem.class,
         HALUtil.class,
+        MotControllerJNI.class
 })
 @SuppressStaticInitializationFor({
         "edu.wpi.first.networktables.NetworkTablesJNI",
@@ -75,6 +78,9 @@ public class DriveSubsystemTest {
     @Mock
     SendableChooser mockTurnJoystickScalerChooser;
 
+    // TODO: Mock out this config. That's a bit of work...
+    Config config = Config.instance();
+
     @Before
     public void beforeTest() throws Exception {
         // mock out all the static methods of these JNI classes
@@ -83,14 +89,15 @@ public class DriveSubsystemTest {
         mockStatic(NetworkTablesJNI.class);
         mockStatic(HAL.class);
         mockStatic(HALUtil.class);
+        mockStatic(MotControllerJNI.class);
 
         // For each test, return mock drive train motors when the DriveSubsystem creates them
         // This requires @PrepareForTest(DriveSubsystem.class)
         for (int i = 0; i < DriveSubsystem.NUM_MOTORS_PER_SIDE; i++) {
             mockLeftMotors[i] = mock(WPI_TalonSRX.class);
             mockRightMotors[i] = mock(WPI_TalonSRX.class);
-            whenNew(WPI_TalonSRX.class).withArguments(eq(DriveConstants.LEFT_DRIVE_MOTOR_IDS[i])).thenReturn(mockLeftMotors[i]);
-            whenNew(WPI_TalonSRX.class).withArguments(eq(DriveConstants.RIGHT_DRIVE_MOTOR_IDS[i])).thenReturn(mockRightMotors[i]);
+            whenNew(WPI_TalonSRX.class).withArguments(eq(config.motors.drive.left[i].id)).thenReturn(mockLeftMotors[i]);
+            whenNew(WPI_TalonSRX.class).withArguments(eq(config.motors.drive.right[i].id)).thenReturn(mockRightMotors[i]);
         }
 
         // Wire up our mock sendable chooser.
