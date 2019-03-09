@@ -19,8 +19,14 @@ public class DriveConstants {
     // Set velocity follower type to false when independent gear boxes are being used
     // Set to true of all wheels on one side are physically linked
     public static final boolean CLOSED_LOOP_FOLLOWER = false;
+    
     public static final double DRIVE_MOTOR_FULL_THROTTLE_AVERAGE_SPEED_NATIVE_TICKS = 8976.0;	// per 100 ms, average of 10 samples
 
+    // Closed loop ramp rates are tricky; too much and the PID can become unstable as
+    // if there was a lot of system lag; we must be cautious!
+    // An alternative is to use an alpha filter on the inputs to prevent the user
+    // from changing the command too rapidly
+    public static final double DRIVE_MOTOR_CLOSED_LOOP_RAMP_SEC = 0.5;	    // No ramp rate on closed loop (use Motion Magic)
 
     public static final double MAX_ALLOWED_SPEED_IPS = 5.0*12.0;
     public static final double MAX_ALLOWED_TURN_DPS  = 180.0;

@@ -30,11 +30,11 @@ motors:
         name: "Left Front"
         inverted: false
         sensorPhase: true
-        openLoopRampSeconds: 0.250 # Second from neutral to full (easy on the gears)
-        closedLoopRampSeconds: 0
+        openLoopRampSeconds: 0.750 # Second from neutral to full (easy on the gears)
+        closedLoopRampSeconds: .5
         neutralDeadband: 0.04
         neutralMode: Brake
-        fullThrottleAverageSpeedNativeTicks: 8976.8 # per 100 ms, average of 10 samples
+        fullThrottleAverageSpeedNativeTicks: 8976 # per 100 ms, average of 10 samples
         cruiseSpeedNativeTicks: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
         motionCruise: "{{ (motors.drive.left[0].fullThrottleAverageSpeedNativeTicks * .75) | int }}"
         motionAcceleration: "{{ (4346 * .75) | int }}"
@@ -139,7 +139,7 @@ motors:
         kD: "{{ 8.0*10.0*0.146143*2*2*2 *2*2*1.5 }}"
         iZone: 120
       motionCruise: "{{ (.50 * vars.ARM_MAX_SPEED_TICKS_PER_100MS) | int}}"
-      motionAcceleration: "{{ (.50 * vars.ARM_MAX_SPEED_TICKS_PER_100MS) | int }}"
+      motionAcceleration: "{{ (vars.ARM_MAX_SPEED_TICKS_PER_100MS) | int }}"
       encoder:
         enabled: true
         pidLoop: "{{ motors.slots.primaryPIDLoop }}"
@@ -167,7 +167,7 @@ motors:
     climb1: 
       id: "{{ motorIds.CLIMB_MOTOR_1_ID }}"
       name: "Climb1"
-      inverted: false
+      inverted: true
       neutralMode: Brake
       forwardLimitSwitch: 
         enabled: true
