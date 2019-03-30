@@ -173,6 +173,7 @@ public class DriveConstants {
     //  Average the absolute value of that number, adjust as measured_ticks / percentage_factor
     //  Compute Kf = 1023 / adjusted_tick_average
     //  The using that value, run the Motion Magic forward 10 revolutions at the encoder scale
+    //  Note: Be sure to update the cruise velocity to .75*adjusted_tick_average
     //  Note the error (in ticks)
     //  Compute Kp = 0.1 * 1023 / error as a starting point
     //  Command any position through Motion Magic and attempt to turn the motor by hand while holding the command
