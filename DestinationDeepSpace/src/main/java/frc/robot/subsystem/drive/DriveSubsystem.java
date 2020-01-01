@@ -320,6 +320,7 @@ public class DriveSubsystem extends BitBucketSubsystem {
 		// same wheels
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		differentialDrive = new DifferentialDrive(leftMotors[0], rightMotors[0]);
+		differentialDrive.setSafetyEnabled(false);
 
 		// Since we going to use the TalonSRX in this class, the inversion, if needed is
 		// going to be passed to controllers so positive commands on left and right both

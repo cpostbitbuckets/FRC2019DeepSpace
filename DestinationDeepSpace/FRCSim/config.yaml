@@ -1,0 +1,111 @@
+---
+motorDefaults:
+  MiniCIM:
+    kt: "{{ 1.4 / 89 }}" # 1.4 Nm stall torque  / 89 A stall current
+    kv:  "{{ 12 / (5840 * 3.1415926 * 2 / 60.0) }}" # kv is volts per rads/s, so 12 volts, 5840 max rpm
+    resistance: "{{ 12.0 / 89 }}" # Rated for 89A stall @ 12V
+    inertia: "{{ .5 * .979 * (.0635/2) * (.0635/2 )}}" # .979kg cylinder @ 63.5mm diameter... Inertia is I=.5 * m * r^2
+hideFollowers: true
+transmissions:
+- motors:
+  - id: 1
+    name: Left Drive Rear (1)
+    model: MiniCIM
+    kt: "{{ motorDefaults.MiniCIM.kt }}"
+    kv:  "{{ motorDefaults.MiniCIM.kv }}"
+    resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+    inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+  - id: 2
+    name: Left Drive (2)
+    model: MiniCIM
+    kt: "{{ motorDefaults.MiniCIM.kt }}"
+    kv:  "{{ motorDefaults.MiniCIM.kv }}"
+    resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+    inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+  - id: 3
+    name: Left Drive (3)
+    model: MiniCIM
+    kt: "{{ motorDefaults.MiniCIM.kt }}"
+    kv:  "{{ motorDefaults.MiniCIM.kv }}"
+    resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+    inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+  gearRatio: "{{ 9.0 / 1.0 }}"
+  efficiency: 1.0
+- motors:
+    - id: 4
+      name: Right Drive Rear (4)
+      model: MiniCIM
+      kt: "{{ motorDefaults.MiniCIM.kt }}"
+      kv:  "{{ motorDefaults.MiniCIM.kv }}"
+      resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+      inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+    - id: 5
+      name: Right Drive (5)
+      model: MiniCIM
+      kt: "{{ motorDefaults.MiniCIM.kt }}"
+      kv:  "{{ motorDefaults.MiniCIM.kv }}"
+      resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+      inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+    - id: 6
+      name: Right Drive (6)
+      model: MiniCIM
+      kt: "{{ motorDefaults.MiniCIM.kt }}"
+      kv:  "{{ motorDefaults.MiniCIM.kv }}"
+      resistance:  "{{ motorDefaults.MiniCIM.resistance }}"
+      inertia:  "{{ motorDefaults.MiniCIM.inertia }}"
+  gearRatio: "{{ 9.0 / 1.0 }}"
+  efficiency: 1.0
+- motors:
+  - id: 8
+    name: Climb Motor (8)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  - id: 7
+    name: Climb Motor (7)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  gearRatio: 1.0
+  efficiency: 1.0
+- motors:
+  - id: 10
+    name: Intake (10)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  gearRatio: 1.0
+  efficiency: 1.0
+- motors:
+  - id: 9
+    name: Arm Motor (9)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  - id: 12
+    name: Arm Motor (12)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  gearRatio: 1.0
+  efficiency: 1.0
+- motors:
+  - id: 11
+    name: Beak (11)
+    model: bag
+    kt: 0.00819095836320447
+    kv: 0.008398404204492988
+    resistance: 0.22805452519362293
+    inertia: 6.52864E-5
+  gearRatio: 1.0
+  efficiency: 1.0
